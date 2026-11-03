@@ -17,6 +17,41 @@ export default function TShirtIcon({ className = "w-6 h-6", strokeWidth = 1.5 })
   );
 }
 
+export function WomensTopIcon({ className = "w-6 h-6", strokeWidth = 1.5 }) {
+  return (
+    <svg 
+      className={className} 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      strokeWidth={strokeWidth} 
+      strokeLinecap="round" 
+      strokeLinejoin="round"
+    >
+      {/* Sleek minimal fitted women's cropped top */}
+      <path d="M8 4 C9.5 5.5 10.5 6 12 6 C13.5 6 14.5 5.5 16 4 L19.5 7 L17.5 10 L15.5 9 L15 17.5 C15 18 14.5 18.5 14 18.5 L10 18.5 C9.5 18.5 9 18 9 17.5 L8.5 9 L6.5 10 L4.5 7 Z" />
+    </svg>
+  );
+}
+
+export function DressIcon({ className = "w-6 h-6", strokeWidth = 1.5 }) {
+  return (
+    <svg 
+      className={className} 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      strokeWidth={strokeWidth} 
+      strokeLinecap="round" 
+      strokeLinejoin="round"
+    >
+      {/* Sleek minimal outline dress */}
+      <path d="M9 3C10.5 4.5 13.5 4.5 15 3L17 5L15 8L15 11L19 21H5L9 11L9 8L7 5L9 3Z" />
+      <path d="M9 11C11 11.5 13 11.5 15 11" />
+    </svg>
+  );
+}
+
 export function PantsIcon({ className = "w-6 h-6", strokeWidth = 1.5 }) {
   return (
     <svg 

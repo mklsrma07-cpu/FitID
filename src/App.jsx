@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import confetti from 'canvas-confetti';
 import Header from './components/Header';
 import HeroScreen from './components/HeroScreen';
@@ -8,25 +8,23 @@ import ResultsScreen from './components/ResultsScreen';
 import ProductDemoScreen from './components/ProductDemoScreen';
 import ShareProfileModal from './components/ShareProfileModal';
 import { 
-  DEFAULT_PROFILE, 
+  DEFAULT_WOMEN_PROFILE,
+  DEFAULT_MEN_PROFILE, 
   loadSavedProfile, 
   saveProfile, 
   matchAllBrands 
 } from './utils/matchingEngine';
 
 export default function App() {
-  // Load initial profile from localStorage or fallback
   const [profile, setProfile] = useState(() => {
-    return loadSavedProfile() || DEFAULT_PROFILE;
+    return loadSavedProfile() || DEFAULT_WOMEN_PROFILE;
   });
 
   const [hasSavedProfile, setHasSavedProfile] = useState(() => {
     return !!localStorage.getItem('fitid_user_profile');
   });
 
-  // Screen flow: 'hero' | 'measure' | 'engine' | 'results' | 'demo'
   const [currentScreen, setCurrentScreen] = useState(() => {
-    // If user already saved a profile previously, go straight to results, else hero
     return localStorage.getItem('fitid_user_profile') ? 'results' : 'hero';
   });
 
@@ -46,9 +44,15 @@ export default function App() {
     setCurrentScreen('engine');
   };
 
+  const handleSwitchGender = () => {
+    const nextGender = profile.gender === 'women' ? 'men' : 'women';
+    const nextProfile = nextGender === 'women' ? DEFAULT_WOMEN_PROFILE : DEFAULT_MEN_PROFILE;
+    setProfile(nextProfile);
+    saveProfile(nextProfile);
+  };
+
   const handleEngineComplete = () => {
     setCurrentScreen('results');
-    // Subtle white/silver confetti burst
     try {
       confetti({
         particleCount: 40,
@@ -65,7 +69,7 @@ export default function App() {
     if (window.confirm('Reset your FitID profile? This will clear your saved measurements.')) {
       localStorage.removeItem('fitid_user_profile');
       setHasSavedProfile(false);
-      setProfile(DEFAULT_PROFILE);
+      setProfile(DEFAULT_WOMEN_PROFILE);
       setCurrentScreen('hero');
     }
   };
@@ -78,8 +82,9 @@ export default function App() {
         currentScreen={currentScreen}
         onNavigate={(screen) => setCurrentScreen(screen)}
         hasProfile={hasSavedProfile}
+        profile={profile}
         onReset={handleReset}
-        onOpenShare={() => setIsShareOpen(true)}
+        onSwitchGender={handleSwitchGender}
       />
 
       {/* Main Screen Content */}
@@ -113,6 +118,7 @@ export default function App() {
             onEditProfile={() => setCurrentScreen('measure')}
             onGoToDemo={() => setCurrentScreen('demo')}
             onOpenShare={() => setIsShareOpen(true)}
+            onSwitchGender={handleSwitchGender}
           />
         )}
 
@@ -139,16 +145,16 @@ export default function App() {
           <div className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
             <span className="text-neutral-400 font-bold uppercase text-[11px]">
-              FITID UNIVERSAL ENGINE
+              FITID UNIVERSAL ENGINE • WOMEN &amp; MEN
             </span>
           </div>
 
           <div className="text-[11px] text-neutral-400">
-            ZARA • H&amp;M • UNIQLO • LEVI'S • BEWAKOOF • SNITCH • NIKE • ASOS
+            ZARA • MANGO • H&amp;M • UNIQLO • LEVI'S • URBANIC • ASOS • BEWAKOOF • SNITCH
           </div>
 
           <div className="text-[11px] text-neutral-400">
-            ENTER ONCE. FIT EVERYWHERE.
+            OFFICIAL BRAND DATASETS
           </div>
         </div>
       </footer>

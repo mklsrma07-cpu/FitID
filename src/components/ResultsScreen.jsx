@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import TShirtIcon, { PantsIcon, CheckAccentIcon } from './Icons';
+import TShirtIcon, { WomensTopIcon, DressIcon, PantsIcon, CheckAccentIcon } from './Icons';
 import { Search, ChevronDown, ChevronUp, SlidersHorizontal, ArrowRight, Share2, Sparkles, ExternalLink } from 'lucide-react';
 
 export default function ResultsScreen({ 
@@ -8,9 +8,11 @@ export default function ResultsScreen({
   matchedBrands, 
   onEditProfile, 
   onGoToDemo,
-  onOpenShare
+  onOpenShare,
+  onSwitchGender
 }) {
-  const [category, setCategory] = useState('tops'); // 'tops' | 'bottoms' | 'all'
+  const isWomen = profile.gender === 'women';
+  const [category, setCategory] = useState('tops'); // 'tops' | 'bottoms' | 'dresses'
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedBrand, setExpandedBrand] = useState(null);
 
@@ -27,14 +29,14 @@ export default function ResultsScreen({
     <div className="py-6 sm:py-10 px-4 sm:px-6 max-w-4xl mx-auto">
       
       {/* Top Header */}
-      <div className="text-center mb-8 sm:mb-10 space-y-2">
+      <div className="text-center mb-6 sm:mb-8 space-y-2">
         <motion.div
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
           className="inline-flex items-center gap-2 text-[11px] font-mono tracking-widest uppercase text-neutral-400 bg-[#141414] border border-[#2A2A2A] px-3 py-1 rounded-full"
         >
           <CheckAccentIcon className="w-3.5 h-3.5" />
-          <span>PROFILE RESOLVED • {matchedBrands.length} BRANDS MATCHED</span>
+          <span>{isWomen ? "WOMEN'S RESOLUTION" : "MEN'S RESOLUTION"} • {matchedBrands.length} BRANDS MATCHED</span>
         </motion.div>
 
         <motion.h2 
@@ -52,26 +54,46 @@ export default function ResultsScreen({
           transition={{ delay: 0.2 }}
           className="text-xs sm:text-sm font-mono tracking-wider text-neutral-400 uppercase max-w-lg mx-auto"
         >
-          WHY GUESS YOUR SIZE? HERE IS YOUR EXACT FIT ACROSS EVERY FASHION HOUSE.
+          OFFICIAL ONLINE BRAND DATASETS MATCHED TO YOUR EXACT BIOMETRICS.
         </motion.p>
       </div>
 
       {/* Summary Profile Banner */}
       <div className="mb-6 p-4 rounded-[12px] bg-[#141414] border border-[#2A2A2A] flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-3">
-          <div className="text-xs font-mono text-neutral-400 uppercase">
-            YOUR FITID:
+          <div className="flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-[#10B981]" />
+            <span className="text-xs font-mono font-bold text-white uppercase">
+              {isWomen ? "WOMEN'S FITID:" : "MEN'S FITID:"}
+            </span>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="px-2 py-0.5 rounded-[6px] bg-[#0B0B0B] border border-[#2A2A2A] text-xs font-bold text-white font-mono">
-              CHEST: {profile.chest} CM
-            </span>
-            <span className="px-2 py-0.5 rounded-[6px] bg-[#0B0B0B] border border-[#2A2A2A] text-xs font-bold text-white font-mono">
-              WAIST: {profile.waist} CM
-            </span>
-            <span className="px-2 py-0.5 rounded-[6px] bg-[#0B0B0B] border border-[#2A2A2A] text-xs font-bold text-white font-mono">
-              SHOULDER: {profile.shoulder} CM
-            </span>
+
+          <div className="flex flex-wrap items-center gap-2">
+            {isWomen ? (
+              <>
+                <span className="px-2 py-0.5 rounded-[6px] bg-[#0B0B0B] border border-[#2A2A2A] text-xs font-bold text-white font-mono">
+                  BUST: {profile.bust || 88} CM
+                </span>
+                <span className="px-2 py-0.5 rounded-[6px] bg-[#0B0B0B] border border-[#2A2A2A] text-xs font-bold text-white font-mono">
+                  WAIST: {profile.waist} CM
+                </span>
+                <span className="px-2 py-0.5 rounded-[6px] bg-[#0B0B0B] border border-[#2A2A2A] text-xs font-bold text-white font-mono">
+                  HIPS: {profile.hips || 94} CM
+                </span>
+              </>
+            ) : (
+              <>
+                <span className="px-2 py-0.5 rounded-[6px] bg-[#0B0B0B] border border-[#2A2A2A] text-xs font-bold text-white font-mono">
+                  CHEST: {profile.chest} CM
+                </span>
+                <span className="px-2 py-0.5 rounded-[6px] bg-[#0B0B0B] border border-[#2A2A2A] text-xs font-bold text-white font-mono">
+                  WAIST: {profile.waist} CM
+                </span>
+                <span className="px-2 py-0.5 rounded-[6px] bg-[#0B0B0B] border border-[#2A2A2A] text-xs font-bold text-white font-mono">
+                  SHOULDER: {profile.shoulder} CM
+                </span>
+              </>
+            )}
             <span className="px-2 py-0.5 rounded-[6px] bg-[#0B0B0B] border border-[#2A2A2A] text-xs text-neutral-300 font-mono capitalize">
               {profile.fitPreference} fit
             </span>
@@ -79,11 +101,20 @@ export default function ResultsScreen({
         </div>
 
         <div className="flex items-center gap-2">
+          {onSwitchGender && (
+            <button
+              onClick={onSwitchGender}
+              className="px-3 py-1 text-xs font-mono tracking-wider text-neutral-300 hover:text-white bg-[#1C1C1C] hover:bg-[#252525] border border-[#333333] rounded-[8px] transition-all uppercase"
+            >
+              SWITCH TO {isWomen ? "MEN'S" : "WOMEN'S"}
+            </button>
+          )}
+
           <button
             onClick={onEditProfile}
             className="px-3 py-1 text-xs font-mono tracking-wider text-neutral-300 hover:text-white bg-[#1C1C1C] hover:bg-[#252525] border border-[#333333] rounded-[8px] transition-all uppercase"
           >
-            EDIT MEASUREMENTS
+            EDIT
           </button>
           {onOpenShare && (
             <button
@@ -110,9 +141,23 @@ export default function ResultsScreen({
                 : 'text-neutral-400 hover:text-white'
             }`}
           >
-            <TShirtIcon className="w-3.5 h-3.5" />
-            <span>TOPS & TEES</span>
+            {isWomen ? <WomensTopIcon className="w-3.5 h-3.5" /> : <TShirtIcon className="w-3.5 h-3.5" />}
+            <span>TOPS &amp; TEES</span>
           </button>
+
+          {isWomen && (
+            <button
+              onClick={() => setCategory('dresses')}
+              className={`flex-1 sm:flex-none px-4 py-1.5 text-xs font-semibold tracking-wider uppercase rounded-[8px] transition-all flex items-center justify-center gap-1.5 ${
+                category === 'dresses'
+                  ? 'bg-white text-black shadow-sm'
+                  : 'text-neutral-400 hover:text-white'
+              }`}
+            >
+              <DressIcon className="w-3.5 h-3.5" />
+              <span>DRESSES</span>
+            </button>
+          )}
 
           <button
             onClick={() => setCategory('bottoms')}
@@ -123,7 +168,7 @@ export default function ResultsScreen({
             }`}
           >
             <PantsIcon className="w-3.5 h-3.5" />
-            <span>PANTS & JEANS</span>
+            <span>{isWomen ? 'JEANS & SKIRTS' : 'PANTS & JEANS'}</span>
           </button>
         </div>
 
@@ -146,29 +191,32 @@ export default function ResultsScreen({
         {filteredBrands.map((brand, idx) => {
           const isExpanded = expandedBrand === brand.brandId;
           const displaySize = category === 'bottoms' ? brand.bottomSize : brand.topSize;
-          const labelPrefix = category === 'bottoms' ? 'WAIST SIZE' : 'SHIRT SIZE';
 
           return (
             <motion.div
               key={brand.brandId}
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.05 }}
+              transition={{ delay: idx * 0.04 }}
               className={`rounded-[12px] bg-[#141414] border transition-all ${
                 isExpanded ? 'border-neutral-400' : 'border-[#2A2A2A] hover:border-neutral-600'
               }`}
             >
-              {/* Main Card Header / Summary */}
+              {/* Main Card Header */}
               <div 
                 onClick={() => toggleExpand(brand.brandId)}
                 className="p-4 sm:p-5 flex items-center justify-between cursor-pointer select-none"
               >
                 
-                {/* Left: T-Shirt Icon + Brand Info */}
+                {/* Left: Line Icon + Brand Info */}
                 <div className="flex items-center gap-3 sm:gap-4">
                   <div className="w-11 h-11 rounded-[10px] bg-[#0B0B0B] border border-[#2A2A2A] flex items-center justify-center text-white shrink-0">
                     {category === 'bottoms' ? (
                       <PantsIcon className="w-5 h-5 stroke-[1.5]" />
+                    ) : category === 'dresses' ? (
+                      <DressIcon className="w-5 h-5 stroke-[1.5]" />
+                    ) : isWomen ? (
+                      <WomensTopIcon className="w-5 h-5 stroke-[1.5]" />
                     ) : (
                       <TShirtIcon className="w-5 h-5 stroke-[1.5]" />
                     )}
@@ -204,7 +252,7 @@ export default function ResultsScreen({
                       <span>{brand.confidence}%</span>
                     </div>
                     <div className="text-[10px] font-mono text-neutral-500 uppercase">
-                      FIT CONFIDENCE
+                      CONFIDENCE
                     </div>
                   </div>
 
@@ -218,11 +266,10 @@ export default function ResultsScreen({
                       {displaySize}
                     </span>
                     <span className="text-[8px] font-mono text-neutral-400 uppercase tracking-tighter mt-0.5">
-                      {category === 'bottoms' ? 'IN' : 'FIT'}
+                      {category === 'bottoms' ? 'IN' : 'SIZE'}
                     </span>
                   </motion.div>
 
-                  {/* Expand Chevron */}
                   <div className="text-neutral-500">
                     {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                   </div>
@@ -245,7 +292,7 @@ export default function ResultsScreen({
                       {/* Left: Fit Diagnostic */}
                       <div className="space-y-3">
                         <div className="text-[10px] font-mono uppercase tracking-widest text-neutral-400 font-semibold">
-                          ENGINE FIT DIAGNOSTIC
+                          DATASET FIT DIAGNOSTIC
                         </div>
                         <p className="text-xs text-neutral-300 leading-relaxed font-sans">
                           {brand.fitNote}
@@ -253,17 +300,38 @@ export default function ResultsScreen({
                         
                         <div className="p-2.5 rounded-[8px] bg-[#141414] border border-[#2A2A2A] space-y-1.5 text-[11px] font-mono">
                           <div className="flex justify-between">
-                            <span className="text-neutral-500 uppercase">BRAND CUT:</span>
+                            <span className="text-neutral-500 uppercase">OFFICIAL CUT:</span>
                             <span className="text-white font-medium">{brand.styleTag}</span>
                           </div>
-                          <div className="flex justify-between">
-                            <span className="text-neutral-500 uppercase">CHEST BRACKET:</span>
-                            <span className="text-neutral-300 font-medium">{brand.range.chest[0]}-{brand.range.chest[1]} cm</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-neutral-500 uppercase">SHOULDER BRACKET:</span>
-                            <span className="text-neutral-300 font-medium">{brand.range.shoulder[0]}-{brand.range.shoulder[1]} cm</span>
-                          </div>
+                          
+                          {brand.range.bust && (
+                            <div className="flex justify-between">
+                              <span className="text-neutral-500 uppercase">BUST BRACKET:</span>
+                              <span className="text-neutral-300 font-medium">{brand.range.bust[0]}-{brand.range.bust[1]} cm</span>
+                            </div>
+                          )}
+
+                          {brand.range.chest && (
+                            <div className="flex justify-between">
+                              <span className="text-neutral-500 uppercase">CHEST BRACKET:</span>
+                              <span className="text-neutral-300 font-medium">{brand.range.chest[0]}-{brand.range.chest[1]} cm</span>
+                            </div>
+                          )}
+
+                          {brand.range.waist && (
+                            <div className="flex justify-between">
+                              <span className="text-neutral-500 uppercase">WAIST BRACKET:</span>
+                              <span className="text-neutral-300 font-medium">{brand.range.waist[0]}-{brand.range.waist[1]} cm</span>
+                            </div>
+                          )}
+
+                          {brand.range.hips && (
+                            <div className="flex justify-between">
+                              <span className="text-neutral-500 uppercase">HIPS BRACKET:</span>
+                              <span className="text-neutral-300 font-medium">{brand.range.hips[0]}-{brand.range.hips[1]} cm</span>
+                            </div>
+                          )}
+
                           <div className="flex justify-between">
                             <span className="text-neutral-500 uppercase">FIT PREFERENCE:</span>
                             <span className="text-[#10B981] font-medium uppercase">{profile.fitPreference} (APPLIED)</span>
@@ -271,14 +339,14 @@ export default function ResultsScreen({
                         </div>
                       </div>
 
-                      {/* Right: Size Curve Comparison */}
+                      {/* Right: Sizing Spectrum */}
                       <div className="space-y-3">
                         <div className="text-[10px] font-mono uppercase tracking-widest text-neutral-400 font-semibold">
                           SIZING TOLERANCE SPECTRUM
                         </div>
 
                         <div className="space-y-2">
-                          {brand.sizeScores.slice(1, 5).map((item) => {
+                          {brand.sizeScores.slice(0, 5).map((item) => {
                             const isSelected = item.size === brand.topSize;
                             return (
                               <div key={item.size} className="space-y-1">
@@ -312,11 +380,11 @@ export default function ResultsScreen({
         })}
       </div>
 
-      {/* Bottom CTA to Product Demo (Screen 5) */}
+      {/* Bottom CTA to Product Demo */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
+        transition={{ delay: 0.3 }}
         className="mt-10 p-6 rounded-[12px] bg-[#141414] border border-[#2A2A2A] text-center max-w-xl mx-auto space-y-4"
       >
         <div className="inline-block px-3 py-1 rounded-full bg-[#1C1C1C] border border-[#333] text-[10px] font-mono tracking-widest text-neutral-400 uppercase">
@@ -328,7 +396,7 @@ export default function ResultsScreen({
         </h3>
 
         <p className="text-xs text-neutral-400 font-mono uppercase max-w-sm mx-auto">
-          EXPERIENCE HOW ONLINE SHOPPING FEELS WHEN SIZES AUTO-RESOLVE TO YOUR BODY.
+          EXPERIENCE HOW SIZES AUTO-RESOLVE DYNAMICALLY IN ONLINE SHOPPING CART DEMOS.
         </p>
 
         <button

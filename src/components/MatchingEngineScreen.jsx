@@ -1,27 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { CheckAccentIcon } from './Icons';
-import { Cpu, Sparkles, CheckCircle2 } from 'lucide-react';
+import { Cpu } from 'lucide-react';
+import { getBrandsByGender } from '../data/sizeCharts';
+import { matchBrandSize } from '../utils/matchingEngine';
 
 export default function MatchingEngineScreen({ profile, onComplete }) {
   const [stage, setStage] = useState(0);
   const [progress, setProgress] = useState(15);
+  const isWomen = profile.gender === 'women';
 
-  const steps = [
+  const steps = isWomen ? [
+    'Parsing female anatomical vector dimensions...',
+    'Cross-referencing Zara, Mango, H&M, Uniqlo women charts...',
+    'Calculating bust-to-waist drop & hip curves...',
+    'Calibrating ease allowances & resolving 8 brand sizes...'
+  ] : [
     'Parsing anatomical vector dimensions...',
     'Cross-referencing European & Asian brand blocks...',
     'Calibrating ease allowances & fit preference...',
     'Resolving confidence indices across 8 brands...'
   ];
 
-  const brandPreviewList = [
-    { name: 'ZARA', size: 'L' },
-    { name: 'H&M', size: 'M' },
-    { name: 'UNIQLO', size: 'M' },
-    { name: 'LEVI\'S', size: 'M' },
-    { name: 'BEWAKOOF', size: 'L' },
-    { name: 'SNITCH', size: 'L' }
-  ];
+  const brandList = getBrandsByGender(profile.gender).slice(0, 6);
+  const brandPreviewList = brandList.map(b => ({
+    name: b.name,
+    size: matchBrandSize(profile, b).topSize
+  }));
 
   useEffect(() => {
     const timer1 = setTimeout(() => { setStage(1); setProgress(45); }, 600);
@@ -37,6 +42,18 @@ export default function MatchingEngineScreen({ profile, onComplete }) {
     };
   }, [onComplete]);
 
+  const chips = isWomen ? [
+    { label: 'HEIGHT', value: `${profile.height} CM` },
+    { label: 'BUST', value: `${profile.bust || 88} CM` },
+    { label: 'WAIST', value: `${profile.waist} CM` },
+    { label: 'HIPS', value: `${profile.hips || 94} CM` }
+  ] : [
+    { label: 'HEIGHT', value: `${profile.height} CM` },
+    { label: 'CHEST', value: `${profile.chest} CM` },
+    { label: 'WAIST', value: `${profile.waist} CM` },
+    { label: 'SHOULDER', value: `${profile.shoulder} CM` }
+  ];
+
   return (
     <div className="min-h-[calc(100vh-80px)] flex flex-col justify-center items-center py-8 px-4 sm:px-6 max-w-3xl mx-auto">
       
@@ -48,7 +65,7 @@ export default function MatchingEngineScreen({ profile, onComplete }) {
       >
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#141414] border border-[#2A2A2A] text-neutral-400 text-xs font-mono tracking-widest uppercase">
           <span className="w-2 h-2 rounded-full bg-white animate-ping" />
-          <span>NEURAL FIT COMPUTATION</span>
+          <span>{isWomen ? "WOMEN'S NEURAL FIT COMPUTATION" : "MEN'S NEURAL FIT COMPUTATION"}</span>
         </div>
         <h2 className="text-2xl sm:text-4xl font-black uppercase tracking-tight text-white font-sans">
           SIZE MATCHING ENGINE
@@ -63,12 +80,7 @@ export default function MatchingEngineScreen({ profile, onComplete }) {
         
         {/* ROW 1: 4 MEASUREMENT CHIPS AT TOP */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 w-full max-w-xl z-10">
-          {[
-            { label: 'HEIGHT', value: `${profile.height} CM` },
-            { label: 'CHEST', value: `${profile.chest} CM` },
-            { label: 'WAIST', value: `${profile.waist} CM` },
-            { label: 'SHOULDER', value: `${profile.shoulder} CM` }
-          ].map((chip, idx) => (
+          {chips.map((chip, idx) => (
             <motion.div
               key={chip.label}
               initial={{ opacity: 0, y: -15 }}
@@ -90,13 +102,11 @@ export default function MatchingEngineScreen({ profile, onComplete }) {
         {/* SVG CONNECTING LINES (TOP CHIPS TO CENTER BOX) */}
         <div className="w-full max-w-xl h-14 relative my-[-2px]">
           <svg className="w-full h-full" viewBox="0 0 600 60" preserveAspectRatio="none">
-            {/* 4 lines converging */}
             <path d="M 75 0 C 75 30, 260 30, 260 60" stroke="#333333" strokeWidth="1.5" fill="none" strokeDasharray="4 3" />
             <path d="M 225 0 C 225 30, 280 30, 280 60" stroke="#333333" strokeWidth="1.5" fill="none" strokeDasharray="4 3" />
             <path d="M 375 0 C 375 30, 320 30, 320 60" stroke="#333333" strokeWidth="1.5" fill="none" strokeDasharray="4 3" />
             <path d="M 525 0 C 525 30, 340 30, 340 60" stroke="#333333" strokeWidth="1.5" fill="none" strokeDasharray="4 3" />
 
-            {/* Glowing animated signals */}
             <motion.circle r="3" fill="#FFFFFF">
               <animateMotion path="M 75 0 C 75 30, 260 30, 260 60" dur="1s" repeatCount="indefinite" />
             </motion.circle>
@@ -128,7 +138,6 @@ export default function MatchingEngineScreen({ profile, onComplete }) {
             </span>
           </div>
 
-          {/* Current action status */}
           <div className="text-xs font-mono text-neutral-300 min-h-[22px] flex items-center justify-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
             <span>{steps[stage]}</span>
@@ -153,7 +162,6 @@ export default function MatchingEngineScreen({ profile, onComplete }) {
         {/* SVG BRANCHING CONNECTING LINES TO BRAND CARDS */}
         <div className="w-full max-w-xl h-14 relative my-[-2px]">
           <svg className="w-full h-full" viewBox="0 0 600 60" preserveAspectRatio="none">
-            {/* Central convergence to 6 branches */}
             <path d="M 300 0 C 300 25, 50 25, 50 60" stroke="#333333" strokeWidth="1.5" fill="none" strokeDasharray="4 3" />
             <path d="M 300 0 C 300 25, 150 25, 150 60" stroke="#333333" strokeWidth="1.5" fill="none" strokeDasharray="4 3" />
             <path d="M 300 0 C 300 25, 250 25, 250 60" stroke="#333333" strokeWidth="1.5" fill="none" strokeDasharray="4 3" />
@@ -161,7 +169,6 @@ export default function MatchingEngineScreen({ profile, onComplete }) {
             <path d="M 300 0 C 300 25, 450 25, 450 60" stroke="#333333" strokeWidth="1.5" fill="none" strokeDasharray="4 3" />
             <path d="M 300 0 C 300 25, 550 25, 550 60" stroke="#333333" strokeWidth="1.5" fill="none" strokeDasharray="4 3" />
 
-            {/* Outgoing animated light pulses */}
             <motion.circle r="2.5" fill="#FFFFFF">
               <animateMotion path="M 300 0 C 300 25, 50 25, 50 60" dur="1s" repeatCount="indefinite" />
             </motion.circle>
@@ -208,7 +215,6 @@ export default function MatchingEngineScreen({ profile, onComplete }) {
 
       </div>
 
-      {/* Skip button if user wants immediate transition */}
       <div className="mt-8">
         <button
           onClick={onComplete}

@@ -1,8 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import BodyFigure from './BodyFigure';
-import TShirtIcon, { CheckAccentIcon } from './Icons';
-import { ArrowRight, Sparkles, ShieldCheck, Zap } from 'lucide-react';
+import { WomensTopIcon, CheckAccentIcon } from './Icons';
+import { ArrowRight } from 'lucide-react';
 
 export default function HeroScreen({ onStart, hasSavedProfile, onQuickDemo }) {
   return (
@@ -17,7 +17,7 @@ export default function HeroScreen({ onStart, hasSavedProfile, onQuickDemo }) {
       >
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#141414] border border-[#2A2A2A] text-neutral-400 text-xs font-mono tracking-widest uppercase">
           <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-          <span>ZERO GUESSWORK. ZERO RETURNS.</span>
+          <span>WOMEN &amp; MEN SIZING ENGINES • ZERO GUESSWORK</span>
         </div>
       </motion.div>
 
@@ -38,7 +38,7 @@ export default function HeroScreen({ onStart, hasSavedProfile, onQuickDemo }) {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="text-xs sm:text-sm font-mono tracking-widest uppercase text-neutral-400"
         >
-          ONE PROFILE. MULTIPLE BRANDS.
+          ONE PROFILE. ALL BRANDS. WOMEN &amp; MEN SECTIONS.
         </motion.p>
       </div>
 
@@ -55,14 +55,15 @@ export default function HeroScreen({ onStart, hasSavedProfile, onQuickDemo }) {
           <div className="absolute top-3.5 left-4 flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-neutral-600" />
             <span className="text-[10px] font-mono tracking-widest uppercase text-neutral-400">
-              BODY TOPOLOGY
+              FEMALE &amp; MALE TOPOLOGY
             </span>
           </div>
 
           <div className="w-full max-w-[220px] pt-4">
             <BodyFigure 
-              activePart="chest"
-              measurements={{ height: 178, chest: 98, waist: 82, shoulder: 46 }}
+              gender="women"
+              activePart="bust"
+              measurements={{ height: 166, bust: 88, waist: 68, hips: 94 }}
               interactive={false}
               compact={false}
             />
@@ -98,7 +99,7 @@ export default function HeroScreen({ onStart, hasSavedProfile, onQuickDemo }) {
           <div className="space-y-1 mb-4">
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-mono tracking-widest uppercase text-neutral-400">
-                FITID PASS #082
+                FITID PASS • WOMEN'S
               </span>
               <CheckAccentIcon className="w-3.5 h-3.5" />
             </div>
@@ -106,19 +107,23 @@ export default function HeroScreen({ onStart, hasSavedProfile, onQuickDemo }) {
               SIZE PROFILE
             </h3>
             <p className="text-[11px] text-neutral-400">
-              Synced across 8 global fashion standards
+              Sourced from official online brand datasets
             </p>
           </div>
 
           {/* Quick Metrics Grid */}
-          <div className="grid grid-cols-2 gap-2 mb-4">
-            <div className="p-2.5 rounded-[8px] bg-[#0B0B0B] border border-[#2A2A2A]">
-              <span className="text-[9px] font-mono text-neutral-500 uppercase block">CHEST</span>
-              <span className="text-sm font-bold text-white tracking-tight">98 CM</span>
+          <div className="grid grid-cols-3 gap-2 mb-4">
+            <div className="p-2 rounded-[8px] bg-[#0B0B0B] border border-[#2A2A2A] text-center">
+              <span className="text-[8px] font-mono text-neutral-500 uppercase block">BUST</span>
+              <span className="text-xs font-bold text-white tracking-tight">88 CM</span>
             </div>
-            <div className="p-2.5 rounded-[8px] bg-[#0B0B0B] border border-[#2A2A2A]">
-              <span className="text-[9px] font-mono text-neutral-500 uppercase block">SHOULDER</span>
-              <span className="text-sm font-bold text-white tracking-tight">46 CM</span>
+            <div className="p-2 rounded-[8px] bg-[#0B0B0B] border border-[#2A2A2A] text-center">
+              <span className="text-[8px] font-mono text-neutral-500 uppercase block">WAIST</span>
+              <span className="text-xs font-bold text-white tracking-tight">68 CM</span>
+            </div>
+            <div className="p-2 rounded-[8px] bg-[#0B0B0B] border border-[#2A2A2A] text-center">
+              <span className="text-[8px] font-mono text-neutral-500 uppercase block">HIPS</span>
+              <span className="text-xs font-bold text-white tracking-tight">94 CM</span>
             </div>
           </div>
 
@@ -130,21 +135,21 @@ export default function HeroScreen({ onStart, hasSavedProfile, onQuickDemo }) {
 
             <div className="flex items-center justify-between p-2 rounded-[8px] bg-[#0B0B0B] border border-[#2A2A2A]">
               <div className="flex items-center gap-2">
-                <TShirtIcon className="w-3.5 h-3.5 text-neutral-400" />
+                <WomensTopIcon className="w-3.5 h-3.5 text-neutral-400" />
                 <span className="text-xs font-semibold tracking-wider text-white">ZARA</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-mono text-neutral-500">96% fit</span>
+                <span className="text-[10px] font-mono text-neutral-500">97% fit</span>
                 <span className="w-6 h-6 rounded-[6px] bg-[#1E1E1E] border border-[#3A3A3A] flex items-center justify-center font-bold text-xs text-white">
-                  L
+                  S
                 </span>
               </div>
             </div>
 
             <div className="flex items-center justify-between p-2 rounded-[8px] bg-[#0B0B0B] border border-[#2A2A2A]">
               <div className="flex items-center gap-2">
-                <TShirtIcon className="w-3.5 h-3.5 text-neutral-400" />
-                <span className="text-xs font-semibold tracking-wider text-white">UNIQLO</span>
+                <WomensTopIcon className="w-3.5 h-3.5 text-neutral-400" />
+                <span className="text-xs font-semibold tracking-wider text-white">MANGO</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-[10px] font-mono text-neutral-500">98% fit</span>
@@ -156,13 +161,13 @@ export default function HeroScreen({ onStart, hasSavedProfile, onQuickDemo }) {
 
             <div className="flex items-center justify-between p-2 rounded-[8px] bg-[#0B0B0B] border border-[#2A2A2A]">
               <div className="flex items-center gap-2">
-                <TShirtIcon className="w-3.5 h-3.5 text-neutral-400" />
-                <span className="text-xs font-semibold tracking-wider text-white">SNITCH</span>
+                <WomensTopIcon className="w-3.5 h-3.5 text-neutral-400" />
+                <span className="text-xs font-semibold tracking-wider text-white">URBANIC</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-mono text-neutral-500">95% fit</span>
+                <span className="text-[10px] font-mono text-neutral-500">96% fit</span>
                 <span className="w-6 h-6 rounded-[6px] bg-[#1E1E1E] border border-[#3A3A3A] flex items-center justify-center font-bold text-xs text-white">
-                  L
+                  S
                 </span>
               </div>
             </div>
@@ -170,14 +175,14 @@ export default function HeroScreen({ onStart, hasSavedProfile, onQuickDemo }) {
 
           <div className="text-center pt-1 border-t border-[#2A2A2A]/40">
             <span className="text-[10px] font-mono text-neutral-400">
-              TAP BELOW TO ENTER YOUR PROFILE
+              TAP BELOW TO ENTER BIOMETRICS
             </span>
           </div>
         </motion.div>
 
       </div>
 
-      {/* Supported Brands Marquee / Bar */}
+      {/* Supported Brands Marquee */}
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -186,15 +191,17 @@ export default function HeroScreen({ onStart, hasSavedProfile, onQuickDemo }) {
       >
         <span>ZARA</span>
         <span className="text-neutral-700">•</span>
-        <span>H&M</span>
+        <span>MANGO</span>
+        <span className="text-neutral-700">•</span>
+        <span>H&amp;M</span>
         <span className="text-neutral-700">•</span>
         <span>UNIQLO</span>
         <span className="text-neutral-700">•</span>
         <span>LEVI'S</span>
         <span className="text-neutral-700">•</span>
-        <span>BEWAKOOF</span>
+        <span>URBANIC</span>
         <span className="text-neutral-700">•</span>
-        <span>SNITCH</span>
+        <span>ASOS</span>
       </motion.div>
 
       {/* Action CTA Buttons */}
@@ -206,16 +213,16 @@ export default function HeroScreen({ onStart, hasSavedProfile, onQuickDemo }) {
       >
         <button
           onClick={onStart}
-          className="w-full sm:w-auto flex-1 h-13 px-8 rounded-[12px] bg-white hover:bg-neutral-200 text-black font-extrabold uppercase tracking-wider text-sm flex items-center justify-center gap-3 transition-all transform active:scale-[0.98] shadow-lg shadow-white/5"
+          className="w-full sm:w-auto flex-1 h-13 px-8 rounded-[12px] bg-white hover:bg-neutral-200 text-black font-extrabold uppercase tracking-wider text-sm flex items-center justify-center gap-3 transition-all transform active:scale-[0.98] shadow-lg shadow-white/5 cursor-pointer"
         >
-          <span>{hasSavedProfile ? 'UPDATE MEASUREMENTS' : 'GET STARTED'}</span>
+          <span>{hasSavedProfile ? 'UPDATE BIOMETRICS' : 'GET STARTED'}</span>
           <ArrowRight className="w-4 h-4 stroke-[2.5]" />
         </button>
 
         {hasSavedProfile && (
           <button
             onClick={onQuickDemo}
-            className="w-full sm:w-auto h-13 px-6 rounded-[12px] bg-[#141414] hover:bg-[#1A1A1A] border border-[#2A2A2A] text-white font-bold uppercase tracking-wider text-xs flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
+            className="w-full sm:w-auto h-13 px-6 rounded-[12px] bg-[#141414] hover:bg-[#1A1A1A] border border-[#2A2A2A] text-white font-bold uppercase tracking-wider text-xs flex items-center justify-center gap-2 transition-all active:scale-[0.98] cursor-pointer"
           >
             <span>VIEW SIZES</span>
           </button>

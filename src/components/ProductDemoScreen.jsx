@@ -1,20 +1,23 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import TShirtIcon, { CheckAccentIcon } from './Icons';
-import { BRANDS } from '../data/sizeCharts';
+import { motion } from 'framer-motion';
+import TShirtIcon, { WomensTopIcon, CheckAccentIcon } from './Icons';
+import { getBrandsByGender } from '../data/sizeCharts';
 import { matchBrandSize } from '../utils/matchingEngine';
-import { ShoppingBag, ArrowLeft, RotateCcw, Sparkles, Check, Heart, ShieldCheck, Ruler } from 'lucide-react';
+import { ShoppingBag, ArrowLeft, Heart, Check, Ruler } from 'lucide-react';
 
 export default function ProductDemoScreen({ 
   profile, 
   onBackToResults, 
   onEditProfile 
 }) {
-  const [selectedBrandId, setSelectedBrandId] = useState('zara');
+  const isWomen = profile.gender === 'women';
+  const brands = getBrandsByGender(profile.gender);
+
+  const [selectedBrandId, setSelectedBrandId] = useState(brands[0]?.id || 'zara-women');
   const [selectedColor, setSelectedColor] = useState('black');
   
   // Calculate recommended size for current selected brand
-  const currentBrand = BRANDS.find(b => b.id === selectedBrandId) || BRANDS[0];
+  const currentBrand = brands.find(b => b.id === selectedBrandId) || brands[0];
   const matchResult = matchBrandSize(profile, currentBrand);
   const recommendedSize = matchResult.topSize;
 
@@ -24,12 +27,12 @@ export default function ProductDemoScreen({
   // Sync if brand changes
   const handleBrandChange = (brandId) => {
     setSelectedBrandId(brandId);
-    const newBrand = BRANDS.find(b => b.id === brandId) || BRANDS[0];
+    const newBrand = brands.find(b => b.id === brandId) || brands[0];
     const newMatch = matchBrandSize(profile, newBrand);
     setUserSelectedSize(newMatch.topSize);
   };
 
-  const sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+  const sizes = isWomen ? ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL'] : ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 
   const colors = [
     { id: 'black', name: 'OBSIDIAN BLACK', bg: '#0F0F0F', border: '#333' },
@@ -50,12 +53,17 @@ export default function ProductDemoScreen({
           <span>BACK TO ALL BRAND SIZES</span>
         </button>
 
-        <button
-          onClick={onEditProfile}
-          className="text-xs font-mono tracking-wider text-neutral-400 hover:text-white uppercase transition-colors"
-        >
-          EDIT MEASUREMENTS
-        </button>
+        <div className="flex items-center gap-3">
+          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#1C1C1C] border border-[#2A2A2A] text-neutral-300 uppercase">
+            {isWomen ? "WOMEN'S SECTION" : "MEN'S SECTION"}
+          </span>
+          <button
+            onClick={onEditProfile}
+            className="text-xs font-mono tracking-wider text-neutral-400 hover:text-white uppercase transition-colors"
+          >
+            EDIT BIOMETRICS
+          </button>
+        </div>
       </div>
 
       {/* Screen Title */}
@@ -67,17 +75,17 @@ export default function ProductDemoScreen({
           PRODUCT FIT INTEGRATION
         </h2>
         <p className="text-xs font-mono text-neutral-400 tracking-wider uppercase">
-          SWITCH BRANDS BELOW TO OBSERVE SIZES AUTO-CALIBRATING IN REAL TIME.
+          SWITCH BRANDS BELOW TO OBSERVE SIZES AUTO-CALIBRATING ACROSS REAL DATASETS.
         </p>
       </div>
 
       {/* Brand Switcher Bar */}
       <div className="mb-8 p-3 rounded-[12px] bg-[#141414] border border-[#2A2A2A]">
         <div className="text-[10px] font-mono uppercase tracking-widest text-neutral-500 mb-2">
-          SIMULATE STOREFRONT BRAND:
+          SIMULATE {isWomen ? "WOMEN'S" : "MEN'S"} STOREFRONT BRAND:
         </div>
         <div className="flex flex-wrap gap-2">
-          {BRANDS.map(brand => {
+          {brands.map(brand => {
             const isSelected = brand.id === selectedBrandId;
             const bMatch = matchBrandSize(profile, brand);
             return (
@@ -106,10 +114,9 @@ export default function ProductDemoScreen({
         {/* Left Column: Product Visual Mockup */}
         <div className="md:col-span-5 flex flex-col items-center justify-center p-6 sm:p-8 rounded-[12px] bg-[#0B0B0B] border border-[#2A2A2A] relative">
           
-          {/* Top subtle badge */}
           <div className="absolute top-3.5 left-4 flex items-center gap-2">
             <span className="text-[10px] font-mono tracking-widest uppercase text-neutral-500">
-              {currentBrand.name} COLLECTION
+              {currentBrand.name} {isWomen ? "WOMEN" : "MEN"}
             </span>
           </div>
 
@@ -119,12 +126,15 @@ export default function ProductDemoScreen({
             </button>
           </div>
 
-          {/* Minimal line-art t-shirt illustration */}
+          {/* Minimal line-art garment illustration */}
           <div className="w-full max-w-[200px] my-6 flex items-center justify-center">
             <div className="relative">
-              <TShirtIcon className="w-44 h-44 text-white drop-shadow-[0_4px_20px_rgba(255,255,255,0.06)]" strokeWidth={1.2} />
+              {isWomen ? (
+                <WomensTopIcon className="w-44 h-44 text-white drop-shadow-[0_4px_20px_rgba(255,255,255,0.06)]" strokeWidth={1.2} />
+              ) : (
+                <TShirtIcon className="w-44 h-44 text-white drop-shadow-[0_4px_20px_rgba(255,255,255,0.06)]" strokeWidth={1.2} />
+              )}
               
-              {/* Size Watermark on Tee */}
               <div className="absolute inset-0 flex items-center justify-center pt-2">
                 <span className="text-3xl font-black font-sans text-neutral-700/60 select-none">
                   {userSelectedSize}
@@ -155,24 +165,23 @@ export default function ProductDemoScreen({
         {/* Right Column: Product Details & Size Selector */}
         <div className="md:col-span-7 space-y-6">
           
-          {/* Product Header */}
           <div className="space-y-1">
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-mono uppercase tracking-widest text-neutral-400">
-                100% ORGANIC HEAVYWEIGHT COTTON
+                {isWomen ? "ORGANIC RIBBED MODAL FIBERS" : "100% HEAVYWEIGHT COTTON"}
               </span>
               <span className="text-xs font-mono text-neutral-400">
-                SKU: FT-{selectedBrandId.toUpperCase()}-09
+                SKU: FT-{isWomen ? 'W' : 'M'}-{currentBrand.name.toUpperCase()}
               </span>
             </div>
             
             <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-white font-sans">
-              ESSENTIAL COTTON TEE
+              {isWomen ? "RIBBED MODAL FITTED TEE" : "ESSENTIAL COTTON TEE"}
             </h1>
             
             <div className="flex items-center gap-3 pt-1">
               <span className="text-xl font-bold font-mono text-white">
-                $38.00
+                $36.00
               </span>
               <span className="text-xs text-neutral-500 uppercase font-mono">
                 VAT INCLUDED
@@ -180,9 +189,7 @@ export default function ProductDemoScreen({
             </div>
           </div>
 
-          {/* ============================================================== */}
-          {/* THE HIGHLIGHT BAR: "YOUR RECOMMENDED SIZE: M"                  */}
-          {/* ============================================================== */}
+          {/* THE HIGHLIGHT BAR: "YOUR RECOMMENDED SIZE: S / M" */}
           <motion.div 
             key={`${selectedBrandId}-${recommendedSize}`}
             initial={{ opacity: 0, scale: 0.98 }}
@@ -202,11 +209,11 @@ export default function ProductDemoScreen({
             </div>
 
             <p className="text-[11px] text-neutral-400 leading-relaxed font-sans pl-6">
-              Based on your universal profile ({profile.chest}cm chest, {profile.shoulder}cm shoulder) and {currentBrand.name}'s {currentBrand.styleTag.toLowerCase()}.
+              Based on your {isWomen ? "women's" : "men's"} biometrics ({isWomen ? `${profile.bust || 88}cm bust, ${profile.waist}cm waist` : `${profile.chest}cm chest, ${profile.shoulder}cm shoulder`}) calibrated to {currentBrand.name}'s {currentBrand.styleTag.toLowerCase()}.
             </p>
           </motion.div>
 
-          {/* S / M / L / XL / XXL SIZE SELECTOR */}
+          {/* SIZE SELECTOR */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-mono uppercase tracking-widest text-neutral-400 font-semibold">
@@ -221,7 +228,7 @@ export default function ProductDemoScreen({
               </button>
             </div>
 
-            <div className="grid grid-cols-6 gap-2">
+            <div className={`grid ${sizes.length > 6 ? 'grid-cols-7' : 'grid-cols-6'} gap-1.5 sm:gap-2`}>
               {sizes.map((sz) => {
                 const isRecommended = sz === recommendedSize;
                 const isSelected = sz === userSelectedSize;
@@ -238,13 +245,12 @@ export default function ProductDemoScreen({
                         : 'bg-[#0B0B0B] text-neutral-400 border-[#2A2A2A] hover:border-neutral-500 hover:text-white'
                     }`}
                   >
-                    <span className="text-sm font-bold tracking-tight">
+                    <span className="text-xs sm:text-sm font-bold tracking-tight">
                       {sz}
                     </span>
 
-                    {/* Auto-highlight indicator badge */}
                     {isRecommended && (
-                      <span className={`text-[8px] font-mono tracking-tighter uppercase px-1 rounded-sm mt-0.5 ${
+                      <span className={`text-[7px] sm:text-[8px] font-mono tracking-tighter uppercase px-1 rounded-sm mt-0.5 ${
                         isSelected ? 'bg-neutral-900 text-white' : 'bg-[#10B981]/20 text-[#10B981]'
                       }`}>
                         BEST FIT
@@ -262,17 +268,16 @@ export default function ProductDemoScreen({
             )}
           </div>
 
-          {/* ADD TO BAG ACTION */}
+          {/* ADD TO BAG */}
           <div className="pt-2 space-y-3">
             <button
-              onClick={() => alert(`Added ${currentBrand.name} Essential Cotton Tee (Size: ${userSelectedSize}) to bag!`)}
+              onClick={() => alert(`Added ${currentBrand.name} (Size: ${userSelectedSize}) to bag!`)}
               className="w-full h-13 rounded-[12px] bg-white hover:bg-neutral-200 text-black font-extrabold uppercase tracking-wider text-sm flex items-center justify-center gap-3 transition-all transform active:scale-[0.98] shadow-lg shadow-white/5 cursor-pointer"
             >
               <ShoppingBag className="w-4 h-4 stroke-[2.5]" />
               <span>ADD SIZE {userSelectedSize} TO BAG</span>
             </button>
 
-            {/* Micro guarantees */}
             <div className="flex items-center justify-between text-[10px] font-mono text-neutral-500 pt-2 border-t border-[#2A2A2A]">
               <span className="flex items-center gap-1">
                 <Check className="w-3 h-3 text-neutral-400" />

@@ -2,25 +2,30 @@
 
 > **One profile. Multiple brands. Zero guesswork. Zero returns.**
 
-FitID is a mobile-first web app built with **React, Vite, Tailwind CSS, and Framer Motion**. Users enter their body measurements once and instantly see their recommended clothing size across every brand (**Zara, H&M, Uniqlo, Levi's, Bewakoof, Snitch, Nike, ASOS**).
+FitID is a mobile-first web app built with **React, Vite, Tailwind CSS, and Framer Motion**. Users enter their body measurements once and instantly see their recommended clothing size across every major fashion brand, with dedicated **Women's and Men's sections** driven by official brand datasets.
 
 ---
 
 ## ✨ Features
 
 - **Pure Dark Minimalist UI**: Near-black palette (`#0B0B0B`), elevated `#141414` cards, 1px subtle borders (`#2A2A2A`), and `12px` rounded corners.
-- **Precision Vector Topology**: Interactive minimal line-art body silhouette that dynamically illuminates the active measurement zone (Height, Chest, Waist, Shoulder).
-- **Size Matching Engine**: Real-time multi-brand tolerance algorithm calibrating chest, shoulder, and waist measurements with fit preference adjustments (**Slim**, **Regular**, **Relaxed**).
-- **Brand Sizing Matrix**: Instant cross-referencing across:
-  - **ZARA** (European Slim Cut)
-  - **H&M** (Contemporary Regular)
+- **Dedicated Women's & Men's Sections**:
+  - **Women's Section**: Includes female anatomical silhouette with **Bust**, **Waist**, and **Hips** measurement guides, feminine presets, and dress/skirt support.
+  - **Men's Section**: Includes male anatomical silhouette with **Chest**, **Waist**, and **Shoulder** guides.
+- **Official Online Brand Datasets**: Sourced directly from official brand size guides:
+  - **ZARA** (European Slim & Tailored)
+  - **MANGO** (Mediterranean Chic)
+  - **H&M** (Scandinavian Standard)
   - **UNIQLO** (Clean Minimalist Cut)
-  - **LEVI'S** (American Heritage Standard)
-  - **BEWAKOOF** (Relaxed Urban Casual)
+  - **LEVI'S** (Authentic Denim Heritage)
+  - **URBANIC** (Youth Fast-Fashion)
+  - **ASOS DESIGN** (Contemporary London Trend)
+  - **BEWAKOOF** (Relaxed Casual Streetwear)
   - **SNITCH** (Tailored Fast-Fashion Slim)
   - **NIKE** (Performance Athletic)
-  - **ASOS DESIGN** (British Modern Standard)
-- **Live E-Commerce Demo**: Interactive product card for *"Essential Cotton Tee"* with real-time brand switching and auto-highlighted size recommendation bar.
+- **Precision Vector Topology**: Interactive line-art body silhouettes that dynamically highlight the active measurement zone in real-time.
+- **Size Matching Engine**: Real-time multi-brand tolerance algorithm calibrating bust/chest, waist, and hip ratios with fit preference adjustments (**Fitted / Slim**, **Regular**, **Relaxed**).
+- **Live E-Commerce Demo**: Interactive product card with real-time brand switching and auto-highlighted size recommendation bar.
 - **Digital Pass & Storage**: Stores profile locally via `localStorage` with a shareable digital pass modal.
 
 ---
@@ -64,4 +69,4 @@ npm run build
 
 ## 📄 License
 
-MIT © [Mukul Sharma](https://github.com/MukulSharma25)
+MIT © [Mukul Sharma](https://github.com/mklsrma07-cpu)

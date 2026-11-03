@@ -1,20 +1,32 @@
 // FitID Size Matching Engine
-// Calculates optimal clothing sizes and confidence ratings across brands
+// Real-world Multi-brand Biometric Resolution for Women and Men
 
-import { BRANDS } from '../data/sizeCharts';
+import { WOMEN_BRANDS, MEN_BRANDS, getBrandsByGender } from '../data/sizeCharts';
 
 export function matchBrandSize(userProfile, brand) {
-  const { chest = 98, waist = 82, shoulder = 46, height = 175, fitPreference = 'regular' } = userProfile;
+  const isWomen = userProfile.gender === 'women';
+  const { 
+    height = isWomen ? 166 : 178,
+    bust = 88, 
+    chest = 98, 
+    waist = isWomen ? 68 : 82, 
+    hips = isWomen ? 94 : 96, 
+    shoulder = isWomen ? 40 : 46, 
+    fitPreference = 'regular' 
+  } = userProfile;
 
   // Fit preference offset applied to perceived dimensions
   // 'slim' = user tolerates snugger fit (-1.5cm offset)
   // 'relaxed' = user prefers looser drape (+2.5cm offset)
   const offset = fitPreference === 'slim' ? -1.5 : fitPreference === 'relaxed' ? 2.5 : 0;
-  const targetChest = Number(chest) + offset;
-  const targetShoulder = Number(shoulder) + (offset * 0.3);
+  
+  const upperMetric = isWomen ? Number(bust || chest || 88) : Number(chest || bust || 98);
+  const targetUpper = upperMetric + offset;
   const targetWaist = Number(waist) + (offset * 0.5);
+  const targetHips = Number(hips) + (offset * 0.6);
+  const targetShoulder = Number(shoulder) + (offset * 0.3);
 
-  const topSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+  const topSizes = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL'];
   let bestTopSize = 'M';
   let highestScore = -Infinity;
   const sizeScores = [];
@@ -23,48 +35,53 @@ export function matchBrandSize(userProfile, brand) {
     const range = brand.sizes[size];
     if (!range) continue;
 
-    // Midpoints
-    const midChest = (range.chest[0] + range.chest[1]) / 2;
-    const midShoulder = (range.shoulder[0] + range.shoulder[1]) / 2;
-    const midWaist = (range.waist[0] + range.waist[1]) / 2;
+    // Range checks
+    const upperRange = range.bust || range.chest;
+    if (!upperRange) continue;
 
-    // Range spans
-    const chestSpan = range.chest[1] - range.chest[0];
-    const shoulderSpan = range.shoulder[1] - range.shoulder[0];
-    const waistSpan = range.waist[1] - range.waist[0];
+    const waistRange = range.waist;
+    const hipsRange = range.hips;
+    const shoulderRange = range.shoulder;
 
-    // Penalty based on distance from range bounds
-    let chestDist = 0;
-    if (targetChest < range.chest[0]) {
-      chestDist = range.chest[0] - targetChest;
-    } else if (targetChest > range.chest[1]) {
-      chestDist = targetChest - range.chest[1];
+    // Distances
+    let upperDist = 0;
+    if (targetUpper < upperRange[0]) upperDist = upperRange[0] - targetUpper;
+    else if (targetUpper > upperRange[1]) upperDist = targetUpper - upperRange[1];
+
+    let waistDist = 0;
+    if (waistRange) {
+      if (targetWaist < waistRange[0]) waistDist = waistRange[0] - targetWaist;
+      else if (targetWaist > waistRange[1]) waistDist = targetWaist - waistRange[1];
+    }
+
+    let hipsDist = 0;
+    if (hipsRange) {
+      if (targetHips < hipsRange[0]) hipsDist = hipsRange[0] - targetHips;
+      else if (targetHips > hipsRange[1]) hipsDist = targetHips - hipsRange[1];
     }
 
     let shoulderDist = 0;
-    if (targetShoulder < range.shoulder[0]) {
-      shoulderDist = range.shoulder[0] - targetShoulder;
-    } else if (targetShoulder > range.shoulder[1]) {
-      shoulderDist = targetShoulder - range.shoulder[1];
+    if (shoulderRange) {
+      if (targetShoulder < shoulderRange[0]) shoulderDist = shoulderRange[0] - targetShoulder;
+      else if (targetShoulder > shoulderRange[1]) shoulderDist = targetShoulder - shoulderRange[1];
     }
 
-    let waistDist = 0;
-    if (targetWaist < range.waist[0]) {
-      waistDist = range.waist[0] - targetWaist;
-    } else if (targetWaist > range.waist[1]) {
-      waistDist = targetWaist - range.waist[1];
+    // Centeredness bonus
+    const upperSpan = upperRange[1] - upperRange[0];
+    const upperMid = (upperRange[0] + upperRange[1]) / 2;
+    const upperCenterOffset = Math.abs(targetUpper - upperMid) / (upperSpan / 2);
+
+    let weightedDistance = 0;
+    if (isWomen) {
+      // For Women: Bust (50%), Waist (30%), Hips (20%)
+      weightedDistance = (upperDist * 0.50) + (waistDist * 0.30) + (hipsDist * 0.20);
+    } else {
+      // For Men: Chest (55%), Shoulder (30%), Waist (15%)
+      weightedDistance = (upperDist * 0.55) + (shoulderDist * 0.30) + (waistDist * 0.15);
     }
 
-    // Centeredness bonus (closer to midpoint gives higher accuracy)
-    const chestCenterOffset = Math.abs(targetChest - midChest) / (chestSpan / 2);
-    const shoulderCenterOffset = Math.abs(targetShoulder - midShoulder) / (shoulderSpan / 2);
-
-    // Weighted distance score
-    const weightedDistance = (chestDist * 0.55) + (shoulderDist * 0.30) + (waistDist * 0.15);
-    
-    // Normalized score (100 is perfect fit)
-    let score = 100 - (weightedDistance * 9) - (chestCenterOffset * 3) - (shoulderCenterOffset * 2);
-    score = Math.max(20, Math.min(99, Math.round(score)));
+    let score = 100 - (weightedDistance * 8.5) - (upperCenterOffset * 3);
+    score = Math.max(25, Math.min(99, Math.round(score)));
 
     sizeScores.push({ size, score, range });
 
@@ -74,36 +91,51 @@ export function matchBrandSize(userProfile, brand) {
     }
   }
 
-  // Match bottom sizes (Pants / Jeans)
-  const bottomSizes = ['28', '30', '31', '32', '34', '36'];
-  let bestBottomSize = '32';
+  // Match bottom sizes (Pants / Jeans / Skirts)
+  const bottomSizes = Object.keys(brand.bottomSizes);
+  let bestBottomSize = bottomSizes[0] || '28';
   let bestBottomDiff = Infinity;
 
   for (const bSize of bottomSizes) {
     const bRange = brand.bottomSizes[bSize];
     if (!bRange) continue;
+    
     const midWaist = (bRange.waist[0] + bRange.waist[1]) / 2;
-    const diff = Math.abs(Number(waist) - midWaist);
-    if (diff < bestBottomDiff) {
-      bestBottomDiff = diff;
+    const waistDiff = Math.abs(Number(waist) - midWaist);
+    
+    let hipsDiff = 0;
+    if (bRange.hips || bRange.hip) {
+      const hRange = bRange.hips || bRange.hip;
+      const midHips = (hRange[0] + hRange[1]) / 2;
+      hipsDiff = Math.abs(Number(hips) - midHips);
+    }
+
+    const totalDiff = isWomen ? (waistDiff * 0.5 + hipsDiff * 0.5) : waistDiff;
+
+    if (totalDiff < bestBottomDiff) {
+      bestBottomDiff = totalDiff;
       bestBottomSize = bSize;
     }
   }
 
   // Generate detailed insight
-  const matchedRange = brand.sizes[bestTopSize];
-  let fitNote = 'Standard balanced fit across chest & shoulders.';
-  if (chest >= matchedRange.chest[0] && chest <= matchedRange.chest[1]) {
-    fitNote = `Exact match for chest (${matchedRange.chest[0]}-${matchedRange.chest[1]} cm).`;
-  } else if (chest > matchedRange.chest[1]) {
-    fitNote = `Snug fit around chest (+${(chest - matchedRange.chest[1]).toFixed(0)}cm). Sized for ${fitPreference} cut.`;
-  } else if (chest < matchedRange.chest[0]) {
-    fitNote = `Roomy chest drape (-${(matchedRange.chest[0] - chest).toFixed(0)}cm) aligned with ${fitPreference} style.`;
+  const matchedRange = brand.sizes[bestTopSize] || {};
+  const matchedUpperRange = matchedRange.bust || matchedRange.chest || [84, 88];
+  const metricName = isWomen ? 'bust' : 'chest';
+
+  let fitNote = `Harmonious alignment across ${metricName} & waist.`;
+  if (upperMetric >= matchedUpperRange[0] && upperMetric <= matchedUpperRange[1]) {
+    fitNote = `Direct match for ${metricName} (${matchedUpperRange[0]}-${matchedUpperRange[1]} cm).`;
+  } else if (upperMetric > matchedUpperRange[1]) {
+    fitNote = `Slightly snug around ${metricName} (+${(upperMetric - matchedUpperRange[1]).toFixed(0)}cm). Sized for ${fitPreference} fit.`;
+  } else if (upperMetric < matchedUpperRange[0]) {
+    fitNote = `Comfortable drape (-${(matchedUpperRange[0] - upperMetric).toFixed(0)}cm) aligned with ${fitPreference} cut.`;
   }
 
   return {
     brandId: brand.id,
     brandName: brand.name,
+    gender: brand.gender || (isWomen ? 'women' : 'men'),
     origin: brand.origin,
     styleTag: brand.styleTag,
     fitTendency: brand.fitTendency,
@@ -118,25 +150,43 @@ export function matchBrandSize(userProfile, brand) {
 }
 
 export function matchAllBrands(userProfile) {
-  return BRANDS.map(brand => matchBrandSize(userProfile, brand));
+  const brands = getBrandsByGender(userProfile.gender || 'women');
+  return brands.map(brand => matchBrandSize(userProfile, brand));
 }
 
-export const DEFAULT_PROFILE = {
+export const DEFAULT_WOMEN_PROFILE = {
+  gender: 'women',
+  height: 166,
+  bust: 88,
+  waist: 68,
+  hips: 94,
+  shoulder: 40,
+  weight: 58,
+  fitPreference: 'regular',
+  unit: 'cm'
+};
+
+export const DEFAULT_MEN_PROFILE = {
+  gender: 'men',
   height: 178,
   chest: 98,
   waist: 82,
+  hips: 96,
   shoulder: 46,
   weight: 74,
   fitPreference: 'regular',
   unit: 'cm'
 };
 
+export const DEFAULT_PROFILE = DEFAULT_WOMEN_PROFILE;
+
 export function loadSavedProfile() {
   try {
     const saved = localStorage.getItem('fitid_user_profile');
     if (saved) {
       const parsed = JSON.parse(saved);
-      return { ...DEFAULT_PROFILE, ...parsed };
+      const defaults = parsed.gender === 'men' ? DEFAULT_MEN_PROFILE : DEFAULT_WOMEN_PROFILE;
+      return { ...defaults, ...parsed };
     }
   } catch (e) {
     console.error('Failed to load profile from localStorage', e);
