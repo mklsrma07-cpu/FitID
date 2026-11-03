@@ -40,7 +40,7 @@ FitID is a mobile-first web app built with **React, Vite, Tailwind CSS, and Fram
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/MukulSharma25/FitID.git
+git clone https://github.com/mklsrma07-cpu/FitID.git
 cd FitID
 ```
 
