@@ -2,6 +2,9 @@
 
 > **One profile. Multiple brands. Zero guesswork. Zero returns.**
 
+🌐 **Live Production App:** [https://fitid-beta.vercel.app](https://fitid-beta.vercel.app)  
+📦 **GitHub Repository:** [https://github.com/mklsrma07-cpu/FitID](https://github.com/mklsrma07-cpu/FitID)
+
 FitID is a mobile-first web app built with **React, Vite, Tailwind CSS, and Framer Motion**. Users enter their body measurements once and instantly see their recommended clothing size across every major fashion brand, with dedicated **Women's and Men's sections** driven by official brand datasets.
 
 ---
